@@ -1,45 +1,33 @@
-﻿#include <iostream>
-#include <algorithm>
+﻿#include <SDL.h>
 
-#include <SDL.h>
+import <iostream>;
+import <algorithm>;
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
+constexpr int SCREEN_WIDTH = 800;
+constexpr int SCREEN_HEIGHT = 600;
 
 int main(int argc, char *argv[]) {
-  // Unused argc, argv
-  (void)argc;
-  (void)argv;
-
-  // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::cout << "SDL could not be initialized!" << std::endl
-              << "SDL_Error: " << SDL_GetError() << std::endl;
+    std::printf("SDL could not be initialized! SDL_Error: %s\n",
+                SDL_GetError());
     return 0;
   }
-
-#if defined linux && SDL_VERSION_ATLEAST(2, 0, 8)
-  // Disable compositor bypass
-  if (!SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0")) {
-    std::cout << "SDL can not disable compositor bypass!" << std::endl;
-    return 0;
-  }
-#endif
 
   // Create window
   SDL_Window *window = SDL_CreateWindow(
       "Basic C++ SDL project", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
       SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+
   if (!window) {
-    std::cout << "Window could not be created!" << std::endl
-              << "SDL_Error: " << SDL_GetError() << std::endl;
+    std::printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
   } else {
     // Create renderer
     SDL_Renderer *renderer =
         SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
     if (!renderer) {
-      std::cout << "Renderer could not be created!" << std::endl
-                << "SDL_Error: " << SDL_GetError() << std::endl;
+      std::printf("Renderer could not be created! SDL_Error: %s\n",
+                  SDL_GetError());
     } else {
       // Declare rect of square
       SDL_Rect squareRect;
