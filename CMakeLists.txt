@@ -13,6 +13,8 @@ set(CMAKE_CXX_STANDARD 23)
 include(FetchContent)
 set(FETCHCONTENT_QUIET FALSE)
 
+add_executable (${PROJECT_NAME} "sources/main.ixx")
+
 # SDL2
 FetchContent_Declare(
     SDL2
@@ -23,16 +25,14 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(SDL2)
 
-add_executable (ray_tracing "sources/main.ixx")
+target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_SOURCE_DIR}/include)
 
-target_include_directories(ray_tracing PRIVATE ${SDL2_SOURCE_DIR}/include)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2::SDL2main)
 
-target_link_libraries(ray_tracing PRIVATE SDL2::SDL2 SDL2::SDL2main)
-
-add_custom_command(TARGET ray_tracing POST_BUILD
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<$<CONFIG:Debug>:${SDL2_BINARY_DIR}/Debug/SDL2d.dll>
         $<$<CONFIG:Release>:${SDL2_BINARY_DIR}/Release/SDL2.dll>
-        $<TARGET_FILE_DIR:ray_tracing>
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
     COMMENT "Copying SDL2 DLL to output directory"
 )
