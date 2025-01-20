@@ -10,4 +10,4 @@ project ("ray_tracing" CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable (ray_tracing "sources/ray_tracing.ixx" )
+add_executable (ray_tracing "sources/main.ixx" )
