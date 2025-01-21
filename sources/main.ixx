@@ -4,9 +4,11 @@ import <iostream>;
 import <algorithm>;
 import <cmath>;
 
-constexpr int SCREEN_WIDTH = 900;
-constexpr int SCREEN_HEIGHT = 600;
-constexpr int COLOR_WHITE = 0xffffff;
+constexpr int SCREEN_WIDTH{ 900 };
+constexpr int SCREEN_HEIGHT{ 600 };
+
+constexpr int COLOR_WHITE{ 0xffffff };
+constexpr int COLOR_BLACK{ 0x000000 };
 
 struct Circle {
 	int x;
@@ -44,13 +46,34 @@ int main(int argc, char* argv[]) {
 		0);
 
 	auto* surface = SDL_GetWindowSurface(window);
-	auto circle = Circle{ 200, 200, 80 };
+	auto erase_rect = SDL_Rect{ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
-	fill_circle(surface, circle, COLOR_WHITE);
+	Circle circle{ 200, 200, 80 };
 
-	SDL_UpdateWindowSurface(window);
 
-	SDL_Delay(5000);
+	bool quit{ false };
+	SDL_Event e;
+
+	while (!quit) {
+		SDL_WaitEvent(&e);
+		if (e.type == SDL_QUIT) {
+			quit = true;
+		}
+
+		if (e.type == SDL_MOUSEMOTION && e.motion.state != 0) {
+			circle.x = e.motion.x;
+			circle.y = e.motion.y;
+		}
+
+		// Reset screen
+		SDL_FillRect(surface, &erase_rect, COLOR_BLACK);
+
+		fill_circle(surface, circle, COLOR_WHITE);
+
+		SDL_UpdateWindowSurface(window);
+
+		SDL_Delay(10);
+	}
 
 	return 0;
 }
