@@ -8,7 +8,7 @@ import <numbers>;
 constexpr int SCREEN_WIDTH{900};
 constexpr int SCREEN_HEIGHT{600};
 
-constexpr int RAYS_NUMBER{100};
+constexpr int RAYS_NUMBER{1000};
 
 struct Circle {
   int x;
@@ -22,7 +22,7 @@ struct Ray {
   double angle;
 };
 
-static void draw_circle(SDL_Renderer* renderer, Circle circle) {
+static void draw_circle(SDL_Renderer* renderer, const Circle& circle) {
   int r_squared = std::pow(circle.r, 2);
   for (int x = circle.x - circle.r; x <= circle.x + circle.r; x++) {
     for (int y = circle.y - circle.r; y <= circle.y + circle.r; y++) {
@@ -36,7 +36,9 @@ static void draw_circle(SDL_Renderer* renderer, Circle circle) {
 }
 
 static void draw_rays(SDL_Renderer* renderer,
-                      const std::array<Ray, RAYS_NUMBER>& rays) {
+                      const std::array<Ray, RAYS_NUMBER>& rays,
+                      const Circle& obs) {
+  auto obs_r_squared = std::pow(obs.r, 2);
   for (const auto& ray : rays) {
     float x{static_cast<float>(ray.x_start)};
     float y{static_cast<float>(ray.y_start)};
@@ -48,6 +50,12 @@ static void draw_rays(SDL_Renderer* renderer,
 
       auto pixel = SDL_FRect{x, y, 1, 1};
       SDL_RenderFillRectF(renderer, &pixel);
+
+      auto dist_squared = std::pow(x - obs.x, 2) + std::pow(y - obs.y, 2);
+      if (dist_squared < obs_r_squared) {
+        // Breaking since ray touched the obstacle
+        break;
+      }
 
       if (x < 0 || x > SCREEN_WIDTH || y < 0 || y > SCREEN_HEIGHT) {
         end_of_screen = true;
@@ -80,10 +88,10 @@ int main(int argc, char* argv[]) {
   auto* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
 
   std::array<Ray, RAYS_NUMBER> rays{};
-  Circle light_c{200, 200, 80};
-  Circle shadow_c{650, 300, 140};
+  Circle sun{200, 200, 80};
+  Circle obstacle{650, 300, 140};
 
-  generate_rays(rays, light_c.x, light_c.y);
+  generate_rays(rays, sun.x, sun.y);
 
   bool quit{false};
   SDL_Event e;
@@ -95,21 +103,20 @@ int main(int argc, char* argv[]) {
     }
 
     if (e.type == SDL_MOUSEMOTION && e.motion.state != 0) {
-      light_c.x = e.motion.x;
-      light_c.y = e.motion.y;
-      generate_rays(rays, light_c.x, light_c.y);
+      sun.x = e.motion.x;
+      sun.y = e.motion.y;
+      generate_rays(rays, sun.x, sun.y);
     }
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    draw_circle(renderer, light_c);
-    draw_circle(renderer, shadow_c);
+    draw_circle(renderer, sun);
+    draw_circle(renderer, obstacle);
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-
-    draw_rays(renderer, rays);
+    draw_rays(renderer, rays, obstacle);
 
     SDL_RenderPresent(renderer);
 
