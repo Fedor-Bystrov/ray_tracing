@@ -48,7 +48,8 @@ int main(int argc, char* argv[]) {
 	auto* surface = SDL_GetWindowSurface(window);
 	auto erase_rect = SDL_Rect{ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
-	Circle circle{ 200, 200, 80 };
+	Circle light_c{ 200, 200, 80 };
+	Circle shadow_c{ 650, 300, 140 };
 
 	bool quit{ false };
 	SDL_Event e;
@@ -60,14 +61,15 @@ int main(int argc, char* argv[]) {
 		}
 
 		if (e.type == SDL_MOUSEMOTION && e.motion.state != 0) {
-			circle.x = e.motion.x;
-			circle.y = e.motion.y;
+			light_c.x = e.motion.x;
+			light_c.y = e.motion.y;
 		}
 
 		// Reset screen
 		SDL_FillRect(surface, &erase_rect, COLOR_BLACK);
 
-		fill_circle(surface, circle, COLOR_WHITE);
+		fill_circle(surface, light_c, COLOR_WHITE);
+		fill_circle(surface, shadow_c, COLOR_WHITE);
 
 		SDL_UpdateWindowSurface(window);
 
