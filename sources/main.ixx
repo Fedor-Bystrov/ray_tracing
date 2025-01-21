@@ -1,17 +1,12 @@
 ﻿#include <SDL2/SDL.h>
 
 import <print>;
-import <algorithm>;
 import <array>;
 import <cmath>;
 import <numbers>;
 
 constexpr int SCREEN_WIDTH{900};
 constexpr int SCREEN_HEIGHT{600};
-
-constexpr int COLOR_WHITE{0xffffff};
-constexpr int COLOR_BLACK{0x000000};
-constexpr int COLOR_GREY{0xefefef};
 
 constexpr int RAYS_NUMBER{100};
 
@@ -27,22 +22,21 @@ struct Ray {
   double angle;
 };
 
-static void draw_circle(SDL_Surface* surface, Circle circle, int color) {
+static void draw_circle(SDL_Renderer* renderer, Circle circle) {
   int r_squared = std::pow(circle.r, 2);
   for (int x = circle.x - circle.r; x <= circle.x + circle.r; x++) {
     for (int y = circle.y - circle.r; y <= circle.y + circle.r; y++) {
       int dist_squared = std::pow(x - circle.x, 2) + std::pow(y - circle.y, 2);
       if (dist_squared < r_squared) {
         auto pixel = SDL_Rect{x, y, 1, 1};
-        SDL_FillRect(surface, &pixel, color);
+        SDL_RenderFillRect(renderer, &pixel);
       }
     }
   }
 }
 
-static void draw_rays(SDL_Surface* surface,
-                      const std::array<Ray, RAYS_NUMBER>& rays,
-                      int color) {
+static void draw_rays(SDL_Renderer* renderer,
+                      const std::array<Ray, RAYS_NUMBER>& rays) {
   for (const auto& ray : rays) {
     int x{ray.x_start};
     int y{ray.y_start};
@@ -54,7 +48,7 @@ static void draw_rays(SDL_Surface* surface,
       y += step * std::sin(ray.angle);
 
       auto pixel = SDL_Rect{x, y, 1, 1};
-      SDL_FillRect(surface, &pixel, color);
+      SDL_RenderFillRect(renderer, &pixel);
 
       if (x < 0 || x > SCREEN_WIDTH || y < 0 || y > SCREEN_HEIGHT) {
         end_of_screen = true;
@@ -86,7 +80,8 @@ int main(int argc, char* argv[]) {
       SDL_CreateWindow("Ray Tracing", SDL_WINDOWPOS_CENTERED,
                        SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 
-  auto* surface = SDL_GetWindowSurface(window);
+  auto* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+
   auto erase_rect = SDL_Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
   std::array<Ray, RAYS_NUMBER> rays{};
@@ -108,14 +103,18 @@ int main(int argc, char* argv[]) {
       generate_rays(rays, light_c.x, light_c.y);
     }
 
-    // Reset screen
-    SDL_FillRect(surface, &erase_rect, COLOR_BLACK);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
 
-    draw_circle(surface, light_c, COLOR_WHITE);
-    draw_circle(surface, shadow_c, COLOR_WHITE);
-    draw_rays(surface, rays, COLOR_GREY);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    draw_circle(renderer, light_c);
+    draw_circle(renderer, shadow_c);
 
-    SDL_UpdateWindowSurface(window);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+
+    draw_rays(renderer, rays);
+
+    SDL_RenderPresent(renderer);
 
     SDL_Delay(10);
   }
