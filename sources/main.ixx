@@ -10,13 +10,15 @@ constexpr int SCREEN_HEIGHT{ 600 };
 constexpr int COLOR_WHITE{ 0xffffff };
 constexpr int COLOR_BLACK{ 0x000000 };
 
+constexpr int RAYS_NUMBER{ 100 };
+
 struct Circle {
 	int x;
 	int y;
 	int r;
 };
 
-void fill_circle(SDL_Surface* surface, Circle circle, int color) {
+static void draw_circle(SDL_Surface* surface, Circle circle, int color) {
 	int r_squared = std::pow(circle.r, 2);
 	for (int x = circle.x - circle.r; x <= circle.x + circle.r; x++) {
 		for (int y = circle.y - circle.r; y <= circle.y + circle.r; y++) {
@@ -68,8 +70,8 @@ int main(int argc, char* argv[]) {
 		// Reset screen
 		SDL_FillRect(surface, &erase_rect, COLOR_BLACK);
 
-		fill_circle(surface, light_c, COLOR_WHITE);
-		fill_circle(surface, shadow_c, COLOR_WHITE);
+		draw_circle(surface, light_c, COLOR_WHITE);
+		draw_circle(surface, shadow_c, COLOR_WHITE);
 
 		SDL_UpdateWindowSurface(window);
 
