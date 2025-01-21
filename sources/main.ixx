@@ -1,6 +1,6 @@
-﻿#include <SDL.h>
+﻿#include <SDL2/SDL.h>
 
-import <iostream>;
+import <print>;
 import <algorithm>;
 import <array>;
 import <cmath>;
@@ -47,17 +47,18 @@ static void draw_rays(SDL_Surface* surface,
     int x{ray.x_start};
     int y{ray.y_start};
 
+    int step = 2;
     bool end_of_screen{false};
-    for (int i = 1; !end_of_screen; i++) {
-      if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) {
-        end_of_screen = true;
-      }
-
-      x += i * std::cos(ray.angle);
-      y += i * std::sin(ray.angle);
+    while (!end_of_screen) {
+      x += step * std::cos(ray.angle);
+      y += step * std::sin(ray.angle);
 
       auto pixel = SDL_Rect{x, y, 1, 1};
       SDL_FillRect(surface, &pixel, color);
+
+      if (x < 0 || x > SCREEN_WIDTH || y < 0 || y > SCREEN_HEIGHT) {
+        end_of_screen = true;
+      }
     }
   }
 }
@@ -70,17 +71,17 @@ static void generate_rays(std::array<Ray, RAYS_NUMBER>& rays,
         .x_start{x_start},
         .y_start{y_start},
         .angle{(static_cast<double>(i) / RAYS_NUMBER) * 2 * std::numbers::pi}};
+
+    std::println("{}", rays[i].angle);
   }
 }
 
 int main(int argc, char* argv[]) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::printf("SDL could not be initialized! SDL_Error: %s\n",
-                SDL_GetError());
+    std::println("SDL could not be initialized! SDL_Error: {}", SDL_GetError());
     return 0;
   }
 
-  // Create window
   auto* window =
       SDL_CreateWindow("Ray Tracing", SDL_WINDOWPOS_CENTERED,
                        SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
