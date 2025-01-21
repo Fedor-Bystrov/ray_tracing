@@ -82,8 +82,6 @@ int main(int argc, char* argv[]) {
 
   auto* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
 
-  auto erase_rect = SDL_Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-
   std::array<Ray, RAYS_NUMBER> rays{};
   Circle light_c{200, 200, 80};
   Circle shadow_c{650, 300, 140};
