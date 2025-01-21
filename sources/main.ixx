@@ -38,17 +38,16 @@ static void draw_circle(SDL_Renderer* renderer, Circle circle) {
 static void draw_rays(SDL_Renderer* renderer,
                       const std::array<Ray, RAYS_NUMBER>& rays) {
   for (const auto& ray : rays) {
-    int x{ray.x_start};
-    int y{ray.y_start};
+    float x{static_cast<float>(ray.x_start)};
+    float y{static_cast<float>(ray.y_start)};
 
-    int step = 2;
     bool end_of_screen{false};
     while (!end_of_screen) {
-      x += step * std::cos(ray.angle);
-      y += step * std::sin(ray.angle);
+      x += std::cos(ray.angle);
+      y += std::sin(ray.angle);
 
-      auto pixel = SDL_Rect{x, y, 1, 1};
-      SDL_RenderFillRect(renderer, &pixel);
+      auto pixel = SDL_FRect{x, y, 1, 1};
+      SDL_RenderFillRectF(renderer, &pixel);
 
       if (x < 0 || x > SCREEN_WIDTH || y < 0 || y > SCREEN_HEIGHT) {
         end_of_screen = true;
@@ -65,8 +64,6 @@ static void generate_rays(std::array<Ray, RAYS_NUMBER>& rays,
         .x_start{x_start},
         .y_start{y_start},
         .angle{(static_cast<double>(i) / RAYS_NUMBER) * 2 * std::numbers::pi}};
-
-    std::println("{}", rays[i].angle);
   }
 }
 
@@ -85,6 +82,8 @@ int main(int argc, char* argv[]) {
   std::array<Ray, RAYS_NUMBER> rays{};
   Circle light_c{200, 200, 80};
   Circle shadow_c{650, 300, 140};
+
+  generate_rays(rays, light_c.x, light_c.y);
 
   bool quit{false};
   SDL_Event e;
