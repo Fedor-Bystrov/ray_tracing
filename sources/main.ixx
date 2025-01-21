@@ -4,12 +4,14 @@ import <iostream>;
 import <algorithm>;
 import <array>;
 import <cmath>;
+import <numbers>;
 
 constexpr int SCREEN_WIDTH{900};
 constexpr int SCREEN_HEIGHT{600};
 
 constexpr int COLOR_WHITE{0xffffff};
 constexpr int COLOR_BLACK{0x000000};
+constexpr int COLOR_GREY{0xefefef};
 
 constexpr int RAYS_NUMBER{100};
 
@@ -22,7 +24,7 @@ struct Circle {
 struct Ray {
   int x_start;
   int y_start;
-  int angle;
+  double angle;
 };
 
 static void draw_circle(SDL_Surface* surface, Circle circle, int color) {
@@ -60,6 +62,17 @@ static void draw_rays(SDL_Surface* surface,
   }
 }
 
+static void generate_rays(std::array<Ray, RAYS_NUMBER>& rays,
+                          int x_start,
+                          int y_start) {
+  for (int i = 0; i < RAYS_NUMBER; i++) {
+    rays[i] = Ray{
+        .x_start{x_start},
+        .y_start{y_start},
+        .angle{(static_cast<double>(i) / RAYS_NUMBER) * 2 * std::numbers::pi}};
+  }
+}
+
 int main(int argc, char* argv[]) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::printf("SDL could not be initialized! SDL_Error: %s\n",
@@ -75,6 +88,7 @@ int main(int argc, char* argv[]) {
   auto* surface = SDL_GetWindowSurface(window);
   auto erase_rect = SDL_Rect{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
+  std::array<Ray, RAYS_NUMBER> rays{};
   Circle light_c{200, 200, 80};
   Circle shadow_c{650, 300, 140};
 
@@ -90,6 +104,7 @@ int main(int argc, char* argv[]) {
     if (e.type == SDL_MOUSEMOTION && e.motion.state != 0) {
       light_c.x = e.motion.x;
       light_c.y = e.motion.y;
+      generate_rays(rays, light_c.x, light_c.y);
     }
 
     // Reset screen
@@ -97,6 +112,7 @@ int main(int argc, char* argv[]) {
 
     draw_circle(surface, light_c, COLOR_WHITE);
     draw_circle(surface, shadow_c, COLOR_WHITE);
+    draw_rays(surface, rays, COLOR_GREY);
 
     SDL_UpdateWindowSurface(window);
 
