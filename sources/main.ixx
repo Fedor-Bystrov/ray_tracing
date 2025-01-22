@@ -75,6 +75,11 @@ static void generate_rays(std::array<Ray, RAYS_NUMBER>& rays,
   }
 }
 
+// TODO: 1. Clean up
+// TODO: 2. Add multiple obstacles, try processing in parallel
+// TODO: 3. Make colors and picture prettier
+// TODO: 4. Add description and demo to the Github repo
+
 int main(int argc, char* argv[]) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::println("SDL could not be initialized! SDL_Error: {}", SDL_GetError());
