@@ -8,7 +8,7 @@ import <numbers>;
 constexpr int SCREEN_WIDTH{900};
 constexpr int SCREEN_HEIGHT{600};
 
-constexpr int RAYS_NUMBER{1000};
+constexpr int RAYS_NUMBER{500};
 
 struct Circle {
   int x;
@@ -89,34 +89,43 @@ int main(int argc, char* argv[]) {
 
   std::array<Ray, RAYS_NUMBER> rays{};
   Circle sun{200, 200, 80};
-  Circle obstacle{650, 300, 140};
+  Circle obstacle{520, 300, 140};
 
   generate_rays(rays, sun.x, sun.y);
 
   bool quit{false};
   SDL_Event e;
 
-  while (!quit) {
-    SDL_WaitEvent(&e);
-    if (e.type == SDL_QUIT) {
-      quit = true;
-    }
+  int speed_y{10};
 
-    if (e.type == SDL_MOUSEMOTION && e.motion.state != 0) {
-      sun.x = e.motion.x;
-      sun.y = e.motion.y;
-      generate_rays(rays, sun.x, sun.y);
+  while (!quit) {
+    while (SDL_PollEvent(&e)) {
+      if (e.type == SDL_QUIT) {
+        quit = true;
+      }
+
+      if (e.type == SDL_MOUSEMOTION && e.motion.state != 0) {
+        sun.x = e.motion.x;
+        sun.y = e.motion.y;
+        generate_rays(rays, sun.x, sun.y);
+      }
     }
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
+    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+    draw_rays(renderer, rays, obstacle);
+
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     draw_circle(renderer, sun);
     draw_circle(renderer, obstacle);
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-    draw_rays(renderer, rays, obstacle);
+    obstacle.y += speed_y;
+    if (obstacle.y - obstacle.r <= 0 ||
+        obstacle.y + obstacle.r > SCREEN_HEIGHT) {
+      speed_y = -speed_y;
+    }
 
     SDL_RenderPresent(renderer);
 
