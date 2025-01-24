@@ -23,6 +23,7 @@ struct Ray {
   double angle;
 };
 
+// Bresenham's Algorithm
 static void draw_circle(SDL_Renderer* r, const Circle& circle) {
   int x = circle.r;
   int y = 0;
