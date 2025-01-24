@@ -21,6 +21,8 @@ struct Ray {
   int x_start;
   int y_start;
   double angle;
+  double dx;  // Precomputed cosine
+  double dy;  // Precomputed sine
 };
 
 // Bresenham's Algorithm
@@ -84,10 +86,16 @@ static void generate_rays(std::array<Ray, RAYS_NUMBER>& rays,
                           int x_start,
                           int y_start) {
   for (int i = 0; i < RAYS_NUMBER; i++) {
+    double angle =
+        (static_cast<double>(i) / RAYS_NUMBER) * 2 * std::numbers::pi;
+
     rays[i] = Ray{
         .x_start{x_start},
         .y_start{y_start},
-        .angle{(static_cast<double>(i) / RAYS_NUMBER) * 2 * std::numbers::pi}};
+        .angle{angle},
+        .dx{std::cos(angle)},
+        .dy{std::sin(angle)},
+    };
   }
 }
 
