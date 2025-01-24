@@ -5,11 +5,12 @@ import <array>;
 import <cmath>;
 import <numbers>;
 
-constexpr int SCREEN_WIDTH{900};
-constexpr int SCREEN_HEIGHT{600};
+constexpr int SCREEN_WIDTH{1200};
+constexpr int SCREEN_HEIGHT{900};
 
 constexpr int RAYS_NUMBER{500};
 
+// TODO: add utility methods to structs
 struct Circle {
   int x;
   int y;
@@ -93,8 +94,8 @@ int main(int argc, char* argv[]) {
   auto* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
 
   std::array<Ray, RAYS_NUMBER> rays{};
-  Circle sun{200, 200, 80};
-  Circle obstacle{520, 300, 140};
+  Circle sun{200, 200, 40};
+  Circle obstacle{820, 300, 140};
 
   generate_rays(rays, sun.x, sun.y);
 
