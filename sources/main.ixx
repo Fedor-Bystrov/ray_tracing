@@ -144,10 +144,9 @@ static void draw_rays(SDL_Renderer* r,
   SDL_DestroyTexture(texture);
 }
 
-// TODO: 1. Clean up
-// TODO: 2. Add multiple obstacles, try processing in parallel
-// TODO: 3. Make colors and picture prettier
-// TODO: 4. Add description and demo to the Github repo
+// TODO: Add multiple obstacles, try processing in parallel
+// TODO: Make colors and picture prettier
+// TODO: Add description and demo to the Github repo
 
 int main(int argc, char* argv[]) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -159,7 +158,8 @@ int main(int argc, char* argv[]) {
       SDL_CreateWindow("Ray Tracing", SDL_WINDOWPOS_CENTERED,
                        SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
 
-  auto* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+  auto* renderer = SDL_CreateRenderer(
+      window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
   std::array<Ray, RAYS_NUMBER> rays{};
   Circle sun{200, 200, 40};
@@ -185,10 +185,8 @@ int main(int argc, char* argv[]) {
       }
     }
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
     draw_rays(renderer, rays, obstacle);
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
