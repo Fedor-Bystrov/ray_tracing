@@ -45,13 +45,15 @@ export void compute_ray(std::vector<uint32_t>& pixel_buffer,
     while (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT) {
       int px = static_cast<int>(x);
       int py = static_cast<int>(y);
-      pixel_buffer[px + py * SCREEN_WIDTH] = COLOR_YELLOW;
+      pixel_buffer[px + py * SCREEN_WIDTH] = COLOR_RAY;
 
       double dx = x - obstacle.x;
       double dy = y - obstacle.y;
       double dist_squared = dx * dx + dy * dy;
 
       if (dist_squared < obstacle_r2) {
+        pixel_buffer[px + py * SCREEN_WIDTH] = COLOR_OBSTACLE;
+
         break;
       }
 
