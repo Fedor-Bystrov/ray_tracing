@@ -59,7 +59,6 @@ static void draw_circle(SDL_Renderer* r, const Circle& circle) {
 }
 
 // TODO: Add multiple obstacles, try processing in parallel
-// TODO: Make colors and picture prettier
 // TODO: Add description and demo to the Github repo
 
 int main(int argc, char* argv[]) {
