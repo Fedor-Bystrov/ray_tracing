@@ -58,9 +58,6 @@ static void draw_circle(SDL_Renderer* r, const Circle& circle) {
   }
 }
 
-// TODO: Add multiple obstacles, try processing in parallel
-// TODO: Add description and demo to the Github repo
-
 int main(int argc, char* argv[]) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::println("SDL could not be initialized! SDL_Error: {}", SDL_GetError());
