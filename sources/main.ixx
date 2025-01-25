@@ -14,10 +14,10 @@ using namespace RT::Rays;
 
 static void draw_rays(SDL_Renderer* r,
                       const std::array<Ray, RAYS_NUMBER>& rays,
-                      const Circle& obstacle) {
+                      const std::vector<Circle>& obstacles) {
   std::vector<uint32_t> pixel_buffer(PIXELS, COLOR_BLACK);
 
-  compute_rays(pixel_buffer, rays, obstacle, 4);
+  compute_rays(pixel_buffer, rays, obstacles, 4);
 
   auto texture =
       SDL_CreateTexture(r, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC,
@@ -76,7 +76,8 @@ int main(int argc, char* argv[]) {
 
   std::array<Ray, RAYS_NUMBER> rays{};
   Circle sun{200, 200, 40};
-  Circle obstacle{820, 300, 140};
+
+  std::vector<Circle> obstacles{{820, 300, 140}, {200, 700, 40}};
 
   generate_rays(rays, sun.x, sun.y);
 
@@ -100,15 +101,18 @@ int main(int argc, char* argv[]) {
 
     SDL_RenderClear(renderer);
 
-    draw_rays(renderer, rays, obstacle);
+    draw_rays(renderer, rays, obstacles);
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     draw_circle(renderer, sun);
-    draw_circle(renderer, obstacle);
 
-    obstacle.y += speed_y;
-    if (obstacle.y - obstacle.r <= 0 ||
-        obstacle.y + obstacle.r > SCREEN_HEIGHT) {
+    for (const auto& obstacle : obstacles) {
+      draw_circle(renderer, obstacle);
+    }
+
+    obstacles[0].y += speed_y;
+    if (obstacles[0].y - obstacles[0].r <= 0 ||
+        obstacles[0].y + obstacles[0].r > SCREEN_HEIGHT) {
       speed_y = -speed_y;
     }
 

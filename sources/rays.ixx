@@ -32,10 +32,10 @@ export void generate_rays(std::array<Ray, RAYS_NUMBER>& rays,
 
 export void compute_ray(std::vector<uint32_t>& pixel_buffer,
                         const std::array<Ray, RAYS_NUMBER>& rays,
-                        const Circle& obstacle,
+                        const std::vector<Circle>& obstacles,
                         size_t start,
                         size_t end) {
-  auto obstacle_r2 = static_cast<double>(obstacle.r) * obstacle.r;
+  auto obstacle_r2 = static_cast<double>(obstacles[0].r) * obstacles[0].r;
 
   for (size_t i = start; i < end; ++i) {
     const auto& ray = rays[i];
@@ -47,13 +47,12 @@ export void compute_ray(std::vector<uint32_t>& pixel_buffer,
       int py = static_cast<int>(y);
       pixel_buffer[px + py * SCREEN_WIDTH] = COLOR_RAY;
 
-      double dx = x - obstacle.x;
-      double dy = y - obstacle.y;
+      double dx = x - obstacles[0].x;
+      double dy = y - obstacles[0].y;
       double dist_squared = dx * dx + dy * dy;
 
       if (dist_squared < obstacle_r2) {
         pixel_buffer[px + py * SCREEN_WIDTH] = COLOR_OBSTACLE;
-
         break;
       }
 
@@ -65,7 +64,7 @@ export void compute_ray(std::vector<uint32_t>& pixel_buffer,
 
 export void compute_rays(std::vector<uint32_t>& pixel_buffer,
                          const std::array<Ray, RAYS_NUMBER>& rays,
-                         const Circle& obstacle,
+                         const std::vector<Circle>& obstacles,
                          int num_threads) {
   std::vector<std::thread> threads;
   size_t rays_per_thread = RAYS_NUMBER / num_threads;
@@ -75,7 +74,7 @@ export void compute_rays(std::vector<uint32_t>& pixel_buffer,
     size_t end = (t == num_threads - 1) ? RAYS_NUMBER : start + rays_per_thread;
     threads.emplace_back(
         [&](size_t start, size_t end) {
-          compute_ray(pixel_buffer, rays, obstacle, start, end);
+          compute_ray(pixel_buffer, rays, obstacles, start, end);
         },
         start, end);
   }
