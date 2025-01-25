@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
   std::array<Ray, RAYS_NUMBER> rays{};
   Circle sun{200, 200, 40};
 
-  std::vector<Circle> obstacles{{820, 300, 140}, {200, 700, 40}};
+  std::vector<Circle> obstacles{{820, 300, 140}, {350, 650, 80}};
 
   generate_rays(rays, sun.x, sun.y);
 

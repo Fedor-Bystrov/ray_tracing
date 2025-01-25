@@ -35,7 +35,8 @@ export void compute_ray(std::vector<uint32_t>& pixel_buffer,
                         const std::vector<Circle>& obstacles,
                         size_t start,
                         size_t end) {
-  auto obstacle_r2 = static_cast<double>(obstacles[0].r) * obstacles[0].r;
+  auto obstacle0_r2 = static_cast<double>(obstacles[0].r) * obstacles[0].r;
+  auto obstacle1_r2 = static_cast<double>(obstacles[1].r) * obstacles[1].r;
 
   for (size_t i = start; i < end; ++i) {
     const auto& ray = rays[i];
@@ -47,11 +48,15 @@ export void compute_ray(std::vector<uint32_t>& pixel_buffer,
       int py = static_cast<int>(y);
       pixel_buffer[px + py * SCREEN_WIDTH] = COLOR_RAY;
 
-      double dx = x - obstacles[0].x;
-      double dy = y - obstacles[0].y;
-      double dist_squared = dx * dx + dy * dy;
+      double dx0 = x - obstacles[0].x;
+      double dy0 = y - obstacles[0].y;
+      double dist_squared0 = dx0 * dx0 + dy0 * dy0;
 
-      if (dist_squared < obstacle_r2) {
+      double dx1 = x - obstacles[1].x;
+      double dy1 = y - obstacles[1].y;
+      double dist_squared1 = dx1 * dx1 + dy1 * dy1;
+
+      if (dist_squared0 < obstacle0_r2 || dist_squared1 < obstacle1_r2) {
         pixel_buffer[px + py * SCREEN_WIDTH] = COLOR_OBSTACLE;
         break;
       }
