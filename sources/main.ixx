@@ -4,9 +4,12 @@ import <print>;
 import <array>;
 import <cmath>;
 import <numbers>;
+import <vector>;
+import <thread>;
 
 constexpr int SCREEN_WIDTH{1200};
 constexpr int SCREEN_HEIGHT{900};
+constexpr int PIXELS{SCREEN_WIDTH * SCREEN_HEIGHT};
 
 constexpr int RAYS_NUMBER{500};
 
@@ -53,33 +56,68 @@ static void draw_circle(SDL_Renderer* r, const Circle& circle) {
   }
 }
 
-static void draw_rays(SDL_Renderer* renderer,
-                      const std::array<Ray, RAYS_NUMBER>& rays,
-                      const Circle& obs) {
-  auto obs_r_squared = std::pow(obs.r, 2);
-  for (const auto& ray : rays) {
-    float x{static_cast<float>(ray.x_start)};
-    float y{static_cast<float>(ray.y_start)};
+static void draw_rays_to_buffer(std::vector<uint32_t>& pixel_buffer,
+                                const std::array<Ray, RAYS_NUMBER>& rays,
+                                const Circle& obstacle) {
+  auto ray_worker = [&](size_t start, size_t end) {
+    auto obstacle_r2 = static_cast<double>(obstacle.r) * obstacle.r;
 
-    bool end_of_screen{false};
-    while (!end_of_screen) {
-      x += std::cos(ray.angle);
-      y += std::sin(ray.angle);
+    for (size_t i = start; i < end; ++i) {
+      const auto& ray = rays[i];
+      double x = static_cast<double>(ray.x_start);
+      double y = static_cast<double>(ray.y_start);
 
-      auto pixel = SDL_FRect{x, y, 1, 1};
-      SDL_RenderFillRectF(renderer, &pixel);
+      while (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT) {
+        int px = static_cast<int>(x);
+        int py = static_cast<int>(y);
+        pixel_buffer[px + py * SCREEN_WIDTH] = 0xFFFFFF00;
 
-      auto dist_squared = std::pow(x - obs.x, 2) + std::pow(y - obs.y, 2);
-      if (dist_squared < obs_r_squared) {
-        // Breaking since ray touched the obstacle
-        break;
-      }
+        double dx = x - obstacle.x;
+        double dy = y - obstacle.y;
+        double dist_squared = dx * dx + dy * dy;
 
-      if (x < 0 || x > SCREEN_WIDTH || y < 0 || y > SCREEN_HEIGHT) {
-        end_of_screen = true;
+        if (dist_squared < obstacle_r2) {
+          break;
+        }
+
+        x += ray.dx;
+        y += ray.dy;
       }
     }
+  };
+
+  size_t num_threads{4};
+
+  std::vector<std::thread> threads;
+  size_t rays_per_thread = RAYS_NUMBER / num_threads;
+
+  for (size_t t = 0; t < num_threads; ++t) {
+    size_t start = t * rays_per_thread;
+    size_t end = (t == num_threads - 1) ? RAYS_NUMBER : start + rays_per_thread;
+    threads.emplace_back(ray_worker, start, end);
   }
+
+  for (auto& thread : threads) {
+    thread.join();
+  }
+}
+
+static void draw_rays(SDL_Renderer* r,
+                      const std::array<Ray, RAYS_NUMBER>& rays,
+                      const Circle& obstacle) {
+  std::vector<uint32_t> pixel_buffer(PIXELS, 0x00000000);
+
+  draw_rays_to_buffer(pixel_buffer, rays, obstacle);
+
+  auto texture =
+      SDL_CreateTexture(r, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC,
+                        SCREEN_WIDTH, SCREEN_HEIGHT);
+
+  SDL_UpdateTexture(texture, nullptr, pixel_buffer.data(),
+                    SCREEN_WIDTH * sizeof(uint32_t));
+
+  SDL_RenderCopy(r, texture, nullptr, nullptr);
+  SDL_DestroyTexture(texture);
 }
 
 static void generate_rays(std::array<Ray, RAYS_NUMBER>& rays,
