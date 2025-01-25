@@ -1,4 +1,4 @@
-﻿# 🌟 Real-Time Ray Tracing Simulation with SDL & C++ 🌟
+﻿# 🌟Real-Time Ray Tracing Simulation with SDL & C++🌟
 
 This project showcases the power of C++ and SDL in creating efficient ray tracing animations. 
 This simulation features a dynamic sun emitting rays and obstacles casting realistic shadows.
@@ -16,9 +16,7 @@ This simulation features a dynamic sun emitting rays and obstacles casting reali
 
 ## 🎨 Demo
 
-![Simulation Screenshot](./demo.gig)
-
-*Move the sun with your mouse to see the shadows change dynamically!*
+![Simulation Screenshot](./demo.gif)
 
 ## 🛠️ Technologies Used
 
