@@ -2,7 +2,6 @@
 
 import <print>;
 import <array>;
-import <cmath>;
 import <numbers>;
 import <vector>;
 import <thread>;
@@ -11,9 +10,8 @@ constexpr int SCREEN_WIDTH{1200};
 constexpr int SCREEN_HEIGHT{900};
 constexpr int PIXELS{SCREEN_WIDTH * SCREEN_HEIGHT};
 
-constexpr int RAYS_NUMBER{500};
+constexpr int RAYS_NUMBER{1000};
 
-// TODO: add utility methods to structs
 struct Circle {
   int x;
   int y;
