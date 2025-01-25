@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD 23)
 include(FetchContent)
 set(FETCHCONTENT_QUIET FALSE)
 
-add_executable (${PROJECT_NAME} "sources/main.ixx")
+add_executable (${PROJECT_NAME} "sources/main.ixx" "sources/rays.ixx" "sources/models.ixx" "sources/constants.ixx")
 
 # SDL2
 FetchContent_Declare(

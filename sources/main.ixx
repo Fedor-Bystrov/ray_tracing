@@ -6,25 +6,31 @@ import <numbers>;
 import <vector>;
 import <thread>;
 
-constexpr int SCREEN_WIDTH{1200};
-constexpr int SCREEN_HEIGHT{900};
-constexpr int PIXELS{SCREEN_WIDTH * SCREEN_HEIGHT};
+import constants;
+import models;
+import rays;
 
-constexpr int RAYS_NUMBER{1000};
+using namespace RT::Models;
+using namespace RT::Constants;
+using namespace RT::Rays;
 
-struct Circle {
-  int x;
-  int y;
-  int r;
-};
+static void draw_rays(SDL_Renderer* r,
+                      const std::array<Ray, RAYS_NUMBER>& rays,
+                      const Circle& obstacle) {
+  std::vector<uint32_t> pixel_buffer(PIXELS, COLOR_BLACK);
 
-struct Ray {
-  int x_start;
-  int y_start;
-  double angle;
-  double dx;  // Precomputed cosine
-  double dy;  // Precomputed sine
-};
+  compute_rays(pixel_buffer, rays, obstacle, 4);
+
+  auto texture =
+      SDL_CreateTexture(r, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC,
+                        SCREEN_WIDTH, SCREEN_HEIGHT);
+
+  SDL_UpdateTexture(texture, nullptr, pixel_buffer.data(),
+                    SCREEN_WIDTH * sizeof(uint32_t));
+
+  SDL_RenderCopy(r, texture, nullptr, nullptr);
+  SDL_DestroyTexture(texture);
+}
 
 // Bresenham's Algorithm
 static void draw_circle(SDL_Renderer* r, const Circle& circle) {
@@ -52,94 +58,6 @@ static void draw_circle(SDL_Renderer* r, const Circle& circle) {
       direction -= 2 * x + 1;
     }
   }
-}
-
-static void generate_rays(std::array<Ray, RAYS_NUMBER>& rays,
-                          int x_start,
-                          int y_start) {
-  for (int i = 0; i < RAYS_NUMBER; i++) {
-    double angle =
-        (static_cast<double>(i) / RAYS_NUMBER) * 2 * std::numbers::pi;
-
-    rays[i] = Ray{
-        .x_start{x_start},
-        .y_start{y_start},
-        .angle{angle},
-        .dx{std::cos(angle)},
-        .dy{std::sin(angle)},
-    };
-  }
-}
-
-static void compute_ray(std::vector<uint32_t>& pixel_buffer,
-                        const std::array<Ray, RAYS_NUMBER>& rays,
-                        const Circle& obstacle,
-                        size_t start,
-                        size_t end) {
-  auto obstacle_r2 = static_cast<double>(obstacle.r) * obstacle.r;
-
-  for (size_t i = start; i < end; ++i) {
-    const auto& ray = rays[i];
-    double x = static_cast<double>(ray.x_start);
-    double y = static_cast<double>(ray.y_start);
-
-    while (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT) {
-      int px = static_cast<int>(x);
-      int py = static_cast<int>(y);
-      pixel_buffer[px + py * SCREEN_WIDTH] = 0xFFFF00FF;
-
-      double dx = x - obstacle.x;
-      double dy = y - obstacle.y;
-      double dist_squared = dx * dx + dy * dy;
-
-      if (dist_squared < obstacle_r2) {
-        break;
-      }
-
-      x += ray.dx;
-      y += ray.dy;
-    }
-  }
-}
-
-static void compute_rays(std::vector<uint32_t>& pixel_buffer,
-                         const std::array<Ray, RAYS_NUMBER>& rays,
-                         const Circle& obstacle,
-                         int num_threads) {
-  std::vector<std::thread> threads;
-  size_t rays_per_thread = RAYS_NUMBER / num_threads;
-
-  for (size_t t = 0; t < num_threads; ++t) {
-    size_t start = t * rays_per_thread;
-    size_t end = (t == num_threads - 1) ? RAYS_NUMBER : start + rays_per_thread;
-    threads.emplace_back(
-        [&](size_t start, size_t end) {
-          compute_ray(pixel_buffer, rays, obstacle, start, end);
-        },
-        start, end);
-  }
-
-  for (auto& thread : threads) {
-    thread.join();
-  }
-}
-
-static void draw_rays(SDL_Renderer* r,
-                      const std::array<Ray, RAYS_NUMBER>& rays,
-                      const Circle& obstacle) {
-  std::vector<uint32_t> pixel_buffer(PIXELS, 0x00000000);
-
-  compute_rays(pixel_buffer, rays, obstacle, 4);
-
-  auto texture =
-      SDL_CreateTexture(r, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC,
-                        SCREEN_WIDTH, SCREEN_HEIGHT);
-
-  SDL_UpdateTexture(texture, nullptr, pixel_buffer.data(),
-                    SCREEN_WIDTH * sizeof(uint32_t));
-
-  SDL_RenderCopy(r, texture, nullptr, nullptr);
-  SDL_DestroyTexture(texture);
 }
 
 // TODO: Add multiple obstacles, try processing in parallel
