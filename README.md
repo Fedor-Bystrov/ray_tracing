@@ -24,3 +24,10 @@ This simulation features a dynamic sun emitting rays and obstacles casting reali
 - **SDL2:** Utilized for rendering graphics and handling user input.
 - **Multi-Threading:** Implemented using C++ `<thread>` library to optimize ray processing.
 - **Bresenham's Algorithm:** Applied for efficient circle rendering.
+
+
+## Compiling project
+
+1. Run `cmake --preset=linux-release`
+2. Run `cmake --build --preset=linux-debug-build`
+3. Run `./build/debug/bin/ray_tracing`
