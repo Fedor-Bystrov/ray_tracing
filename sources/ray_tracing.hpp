@@ -49,11 +49,11 @@ void generate_rays(std::array<Ray, RAYS_NUMBER>& rays,
         (static_cast<double>(i) / RAYS_NUMBER) * 2 * std::numbers::pi;
 
     rays[i] = RT::Models::Ray{
-        .x_start{x_start},
-        .y_start{y_start},
-        .angle{angle},
-        .dx{std::cos(angle)},
-        .dy{std::sin(angle)},
+        .x_start = x_start,
+        .y_start = y_start,
+        .angle = angle,
+        .dx = std::cos(angle),
+        .dy = std::sin(angle),
     };
   }
 }
