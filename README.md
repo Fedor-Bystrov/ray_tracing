@@ -28,5 +28,5 @@ This simulation features a dynamic sun emitting rays and obstacles casting reali
 ## Compiling project
 
 1. Run `cmake --preset=linux-release`
-2. Run `cmake --build --preset=linux-debug-build`
+2. Run `cmake --build --preset=linux-release-build`
 3. Run `./build/debug/bin/ray_tracing`
