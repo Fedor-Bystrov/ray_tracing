@@ -1,14 +1,14 @@
-export module models;
+#pragma once
 
 namespace RT::Models {
 
-export struct Circle {
+struct Circle {
   int x;
   int y;
   int r;
 };
 
-export struct Ray {
+struct Ray {
   int x_start;
   int y_start;
   double angle;

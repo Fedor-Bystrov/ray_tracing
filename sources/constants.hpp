@@ -1,6 +1,6 @@
-export module constants;
+#pragma once
 
-export namespace RT::Constants {
+namespace RT::Constants {
 
 constexpr int SCREEN_WIDTH{1200};
 constexpr int SCREEN_HEIGHT{900};

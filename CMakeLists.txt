@@ -1,38 +1,37 @@
-﻿cmake_minimum_required (VERSION 3.29)
+﻿cmake_minimum_required (VERSION 3.28)
 
-# Enable Hot Reload for MSVC compilers if supported.
-if (POLICY CMP0141)
-  cmake_policy(SET CMP0141 NEW)
-  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
-endif()
+project(ray_tracing CXX)
 
-project (ray_tracing CXX)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_CXX_STANDARD 23)
+# Set default build output directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 include(FetchContent)
 set(FETCHCONTENT_QUIET FALSE)
 
-add_executable (${PROJECT_NAME} "sources/main.ixx" "sources/rays.ixx" "sources/models.ixx" "sources/constants.ixx")
-
 # SDL2
-FetchContent_Declare(
+fetchcontent_declare(
     SDL2
     GIT_REPOSITORY  https://github.com/libsdl-org/SDL
     GIT_TAG         release-2.30.11
     GIT_PROGRESS    TRUE
 )
 
-FetchContent_MakeAvailable(SDL2)
+fetchcontent_makeavailable(SDL2)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_SOURCE_DIR}/include)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2::SDL2main)
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<$<CONFIG:Debug>:${SDL2_BINARY_DIR}/Debug/SDL2d.dll>
-        $<$<CONFIG:Release>:${SDL2_BINARY_DIR}/Release/SDL2.dll>
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMENT "Copying SDL2 DLL to output directory"
+add_executable(${PROJECT_NAME}
+  "sources/main.cpp"
+  "sources/constants.hpp"
+  "sources/models.hpp"
+  "sources/rays.hpp"
+  "sources/rays.cpp"
 )
+
+# Include SDL2
+target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_SOURCE_DIR}/include)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2::SDL2main)

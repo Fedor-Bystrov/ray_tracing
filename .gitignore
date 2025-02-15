@@ -434,3 +434,6 @@ FodyWeavers.xsd
 out/
 
 !vendored/*
+
+.vscode/
+build/
