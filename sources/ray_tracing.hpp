@@ -41,12 +41,9 @@ namespace Rays {
 using namespace RT::Models;
 using namespace RT::Constants;
 
-void generate_rays(std::array<Ray, RAYS_NUMBER>& rays,
-                   int x_start,
-                   int y_start) {
+void generate_rays(std::array<Ray, RAYS_NUMBER>& rays, int x_start, int y_start) {
   for (int i = 0; i < RAYS_NUMBER; i++) {
-    double angle =
-        (static_cast<double>(i) / RAYS_NUMBER) * 2 * std::numbers::pi;
+    double angle = (static_cast<double>(i) / RAYS_NUMBER) * 2 * std::numbers::pi;
 
     rays[i] = RT::Models::Ray{
         .x_start = x_start,

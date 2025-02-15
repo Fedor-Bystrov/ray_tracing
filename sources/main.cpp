@@ -16,11 +16,15 @@ static void draw_rays(SDL_Renderer* r,
 
   compute_rays(pixel_buffer, rays, obstacles, 4);
 
-  auto texture =
-      SDL_CreateTexture(r, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC,
-                        SCREEN_WIDTH, SCREEN_HEIGHT);
+  auto texture = SDL_CreateTexture(r,
+                                   SDL_PIXELFORMAT_RGBA8888,
+                                   SDL_TEXTUREACCESS_STATIC,
+                                   SCREEN_WIDTH,
+                                   SCREEN_HEIGHT);
 
-  SDL_UpdateTexture(texture, nullptr, pixel_buffer.data(),
+  SDL_UpdateTexture(texture,
+                    nullptr,
+                    pixel_buffer.data(),
                     SCREEN_WIDTH * sizeof(uint32_t));
 
   SDL_RenderCopy(r, texture, nullptr, nullptr);
@@ -62,12 +66,17 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
-  auto* window =
-      SDL_CreateWindow("Ray Tracing", SDL_WINDOWPOS_CENTERED,
-                       SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+  auto* window = SDL_CreateWindow("Ray Tracing",
+                                  SDL_WINDOWPOS_CENTERED,
+                                  SDL_WINDOWPOS_CENTERED,
+                                  SCREEN_WIDTH,
+                                  SCREEN_HEIGHT,
+                                  0);
 
-  auto* renderer = SDL_CreateRenderer(
-      window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  auto* renderer =
+      SDL_CreateRenderer(window,
+                         -1,
+                         SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
   std::array<Ray, RAYS_NUMBER> rays{};
   Circle sun{200, 200, 40};

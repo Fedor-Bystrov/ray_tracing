@@ -1,1 +1,5 @@
 BasedOnStyle: chromium
+ColumnLimit: 85
+BinPackArguments: false  # Forces each argument onto a new line if line is too long
+AllowAllArgumentsOnNextLine: false  # Prevents all arguments from being on the next line together
+
