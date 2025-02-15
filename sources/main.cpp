@@ -1,6 +1,7 @@
 ﻿#include <SDL2/SDL.h>
-#include<array>
-#include<vector>
+
+#include <array>
+#include <vector>
 
 #include "ray_tracing.hpp"
 
@@ -56,7 +57,8 @@ static void draw_circle(SDL_Renderer* r, const Circle& circle) {
 
 int main(int argc, char* argv[]) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    //std::println("SDL could not be initialized! SDL_Error: {}", SDL_GetError());
+    // std::println("SDL could not be initialized! SDL_Error: {}",
+    // SDL_GetError());
     return 0;
   }
 
