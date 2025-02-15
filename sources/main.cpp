@@ -1,7 +1,8 @@
 ﻿#include <SDL2/SDL.h>
 
 #include <array>
-#include <print>
+#include <format>
+#include <iostream>
 #include <vector>
 
 #include "constants.hpp"
@@ -64,7 +65,8 @@ static void draw_circle(SDL_Renderer* r, const Circle& circle) {
 
 int main(int argc, char* argv[]) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::println("SDL could not be initialized! SDL_Error: {}", SDL_GetError());
+    std::cerr << std::format("SDL could not be initialized! SDL_Error: {}\n",
+                             SDL_GetError());
     return 0;
   }
 
