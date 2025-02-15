@@ -3,7 +3,7 @@
 #include <array>
 #include <vector>
 
-#include "ray_tracing.hpp"
+#include "rt.hpp"
 
 using namespace RT::Models;
 using namespace RT::Constants;

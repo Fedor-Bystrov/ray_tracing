@@ -24,7 +24,14 @@ fetchcontent_declare(
 
 fetchcontent_makeavailable(SDL2)
 
-add_executable(${PROJECT_NAME} "sources/main.cpp" "sources/ray_tracing.hpp")
+add_executable(${PROJECT_NAME}
+  "sources/main.cpp"
+  "sources/constants.hpp"
+  "sources/models.hpp"
+  "sources/rays.hpp"
+  "sources/rays.cpp"
+  "sources/rt.hpp"
+)
 
 # Include SDL2
 target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_SOURCE_DIR}/include)
