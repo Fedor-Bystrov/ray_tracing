@@ -3,7 +3,9 @@
 #include <array>
 #include <vector>
 
-#include "rt.hpp"
+#include "constants.hpp"
+#include "models.hpp"
+#include "rays.hpp"
 
 using namespace RT::Models;
 using namespace RT::Constants;

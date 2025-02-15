@@ -30,7 +30,6 @@ add_executable(${PROJECT_NAME}
   "sources/models.hpp"
   "sources/rays.hpp"
   "sources/rays.cpp"
-  "sources/rt.hpp"
 )
 
 # Include SDL2

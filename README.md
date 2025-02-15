@@ -1,6 +1,6 @@
 ﻿# 🌟Real-Time Ray Tracing Simulation with SDL & C++🌟
 
-This project showcases the power of C++ and SDL in creating efficient ray tracing animations. 
+This project showcases the power of C++ and SDL in creating efficient ray tracing animations.
 This simulation features a dynamic sun emitting rays and obstacles casting realistic shadows.
 
 ## 🚀 Features
@@ -24,7 +24,6 @@ This simulation features a dynamic sun emitting rays and obstacles casting reali
 - **SDL2:** Utilized for rendering graphics and handling user input.
 - **Multi-Threading:** Implemented using C++ `<thread>` library to optimize ray processing.
 - **Bresenham's Algorithm:** Applied for efficient circle rendering.
-
 
 ## Compiling project
 
